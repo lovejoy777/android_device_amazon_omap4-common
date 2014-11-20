@@ -32,6 +32,7 @@ BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(COMMON_FOLDER)/bluetooth
 
 # Setup custom omap4xxx defines
 BOARD_USE_CUSTOM_LIBION := true
+BOARD_USE_TI_CUSTOM_DOMX := true
 
 # TI Enhancement Settings (Part 1)
 OMAP_ENHANCEMENT := true
