@@ -20,8 +20,8 @@ BOARD_VENDOR := amazon
 # kernel
 PRODUCT_VENDOR_KERNEL_HEADERS := $(COMMON_FOLDER)/kernel-headers
 TARGET_KERNEL_SELINUX_CONFIG := selinux_defconfig
-
 TARGET_SPECIFIC_HEADER_PATH := $(COMMON_FOLDER)/include
+TARGET_SPECIFIC_HEADER_PATH += $(COMMON_FOLDER)/domx/omx_core/inc
 
 # This variable is set first, so it can be overridden
 # by BoardConfigVendor.mk
@@ -38,6 +38,7 @@ BOARD_USE_TI_CUSTOM_DOMX := true
 
 # camera fix
 COMMON_GLOBAL_CFLAGS += -DQCOM_LEGACY_UIDS
+USE_CAMERA_STUB := false
 
 
 
