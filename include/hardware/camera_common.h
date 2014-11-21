@@ -24,6 +24,7 @@
 #include <sys/types.h>
 #include <cutils/native_handle.h>
 #include <system/camera.h>
+#include <system/camera_vendor_tags.h>
 #include <hardware/hardware.h>
 #include <hardware/gralloc.h>
 
@@ -67,6 +68,19 @@ __BEGIN_DECLS
  *   framework from the camera HAL module, which is used to notify the framework
  *   about changes to the camera module state. Modules that provide a valid
  *   set_callbacks() method must report at least this version number.
+ *
+ *******************************************************************************
+ * Version: 2.3 [CAMERA_MODULE_API_VERSION_2_3]
+ *
+ *   This camera module version adds open legacy camera HAL device support.
+ *   Framework can use it to open the camera device as lower device HAL version
+ *   HAL device if the same device can support multiple device API versions.
+ *   The standard hardware module open call (common.methods->open) continues
+ *   to open the camera device with the latest supported version, which is
+ *   also the version listed in camera_info_t.device_version.
+ *
+ *******************************************************************************
+ 
  */
 
 /**
@@ -80,6 +94,8 @@ __BEGIN_DECLS
 #define CAMERA_MODULE_API_VERSION_1_0 HARDWARE_MODULE_API_VERSION(1, 0)
 #define CAMERA_MODULE_API_VERSION_2_0 HARDWARE_MODULE_API_VERSION(2, 0)
 #define CAMERA_MODULE_API_VERSION_2_1 HARDWARE_MODULE_API_VERSION(2, 1)
+#define CAMERA_MODULE_API_VERSION_2_2 HARDWARE_MODULE_API_VERSION(2, 2)
+#define CAMERA_MODULE_API_VERSION_2_3 HARDWARE_MODULE_API_VERSION(2, 3)
 
 #define CAMERA_MODULE_API_VERSION_CURRENT CAMERA_MODULE_API_VERSION_2_1
 
@@ -91,8 +107,11 @@ __BEGIN_DECLS
 #define CAMERA_DEVICE_API_VERSION_2_0 HARDWARE_DEVICE_API_VERSION(2, 0)
 #define CAMERA_DEVICE_API_VERSION_2_1 HARDWARE_DEVICE_API_VERSION(2, 1)
 #define CAMERA_DEVICE_API_VERSION_3_0 HARDWARE_DEVICE_API_VERSION(3, 0)
+#define CAMERA_DEVICE_API_VERSION_3_1 HARDWARE_DEVICE_API_VERSION(3, 1)
+#define CAMERA_DEVICE_API_VERSION_3_2 HARDWARE_DEVICE_API_VERSION(3, 2)
 
-// Device version 2.x is outdated; device version 3.0 is experimental
+// Device version 3.2 is current, older HAL camera device versions are not
+// recommended for new devices.
 #define CAMERA_DEVICE_API_VERSION_CURRENT CAMERA_DEVICE_API_VERSION_1_0
 
 /**
@@ -243,7 +262,36 @@ typedef struct camera_module_callbacks {
 } camera_module_callbacks_t;
 
 typedef struct camera_module {
-    hw_module_t common;
+    
+     
+    /**
+     Common methods of the camera module.  This *must* be the first member of
+     * camera_module as users of this structure will cast a hw_module_t to
+     * camera_module pointer in contexts where it's known the hw_module_t
+     * references a camera_module.
+     * The return values for common.methods->open for camera_module are:
+     *
+     * 0:           On a successful open of the camera device.
+     *
+     * -ENODEV:     The camera device cannot be opened due to an internal
+     *              error.
+     *
+     * -EINVAL:     The input arguments are invalid, i.e. the id is invalid,
+     *              and/or the module is invalid.
+     *
+     * -EBUSY:      The camera device was already opened for this camera id
+     *              (by using this method or open_legacy),
+     *              regardless of the device HAL version it was opened as.
+     *
+     * -EUSERS:     The maximal number of camera devices that can be
+     *              opened concurrently were opened already, either by
+     *              this method or the open_legacy method.
+     *
+     * All other return values from common.methods->open will be treated as
+     * -ENODEV.
+     */
+
+     hw_module_t common;
 
     /**
      * get_number_of_cameras:
@@ -265,6 +313,15 @@ typedef struct camera_module {
      * Return the static camera information for a given camera device. This
      * information may not change for a camera device.
      *
+     * Return values:
+     *
+     * 0:           On a successful operation
+     *
+     * -ENODEV:     The information cannot be provided due to an internal
+     *              error.
+     *
+     * -EINVAL:     The input arguments are invalid, i.e. the id is invalid,
+     *              and/or the module is invalid.
      */
     int (*get_camera_info)(int camera_id, struct camera_info *info);
 
@@ -287,6 +344,15 @@ typedef struct camera_module {
      *
      *    Valid to be called by the framework.
      *
+     * Return values:
+     *
+     * 0:           On a successful operation
+     *
+     * -ENODEV:     The operation cannot be completed due to an internal
+     *              error.
+     *
+     * -EINVAL:     The input arguments are invalid, i.e. the callbacks are
+     *              null
      */
     int (*set_callbacks)(const camera_module_callbacks_t *callbacks);
 
