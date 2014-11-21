@@ -30,8 +30,15 @@ BOARD_USES_GENERIC_AUDIO := false
 # Bluetooth
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(COMMON_FOLDER)/bluetooth
 
+# android-5.0 fixes
+
 # Setup custom omap4xxx defines
 BOARD_USE_CUSTOM_LIBION := true
+
+# camera fix
+COMMON_GLOBAL_CFLAGS += -DQCOM_LEGACY_UIDS
+
+
 
 # TI Enhancement Settings (Part 1)
 OMAP_ENHANCEMENT := true
