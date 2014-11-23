@@ -93,4 +93,4 @@ struct vendor_tag_ops {
 #ifdef __cplusplus	
 } /* extern "C" */	
 #endif	
-			#endif /* SYSTEM_MEDIA_INCLUDE_ANDROID_CAMERA_VENDOR_TAGS_H */
+#endif /* SYSTEM_MEDIA_INCLUDE_ANDROID_CAMERA_VENDOR_TAGS_H */
