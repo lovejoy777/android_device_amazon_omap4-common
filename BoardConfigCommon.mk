@@ -21,7 +21,7 @@ BOARD_VENDOR := amazon
 PRODUCT_VENDOR_KERNEL_HEADERS := $(COMMON_FOLDER)/kernel-headers
 TARGET_KERNEL_SELINUX_CONFIG := selinux_defconfig
 TARGET_SPECIFIC_HEADER_PATH := $(COMMON_FOLDER)/include
-TARGET_SPECIFIC_HEADER_PATH += $(COMMON_FOLDER)/domx/omx_core/inc
+#TARGET_SPECIFIC_HEADER_PATH += $(COMMON_FOLDER)/domx/omx_core/inc
 
 # This variable is set first, so it can be overridden
 # by BoardConfigVendor.mk
@@ -34,7 +34,7 @@ BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(COMMON_FOLDER)/bluetooth
 
 # Setup custom omap4xxx defines
 BOARD_USE_CUSTOM_LIBION := true
-BOARD_USE_TI_CUSTOM_DOMX := true
+#BOARD_USE_CUSTOM_DOMX := true
 
 # camera fix
 COMMON_GLOBAL_CFLAGS += -DQCOM_LEGACY_UIDS
@@ -42,7 +42,7 @@ USE_CAMERA_STUB := false
 
 # HWComposer
 BOARD_USES_HWCOMPOSER := true
-BOARD_USE_CUSTOM_HWC := true
+BOARD_USE_ti_CUSTOM_HWC := true
 
 # TI Enhancement Settings (Part 1)
 OMAP_ENHANCEMENT := true
@@ -87,16 +87,16 @@ BOARD_HAS_NO_SELECT_BUTTON := true
 BOARD_HAS_LARGE_FILESYSTEM := true
 BOARD_UMS_LUNFILE := "/sys/devices/virtual/android_usb/android0/f_mass_storage/lun/file"
 TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 536870912
 TW_INCLUDE_FB2PNG := true
 
 # TI Enhancement Settings (Part 2)
 ifdef BOARD_USE_TI_ENHANCED_DOMX
-    BOARD_USE_TI_DUCATI_H264_PROFILE := true
-    BOARD_USE_TI_DOMX_LOW_SECURE_HEAP := true
-    COMMON_GLOBAL_CFLAGS += -DENHANCED_DOMX
-    ENHANCED_DOMX := true
-    TI_CUSTOM_DOMX_PATH := $(COMMON_FOLDER)/domx
-    DOMX_PATH := $(COMMON_FOLDER)/domx
+   BOARD_USE_TI_DUCATI_H264_PROFILE := true
+   BOARD_USE_TI_CUSTOM_DOMX := true
+   DOMX_PATH := device/amazon/omap4-common/domx
+   TARGET_SPECIFIC_HEADER_PATH += $(COMMON_FOLDER)/domx/omx_core/inc
+   ENHANCED_DOMX := true
 else
     DOMX_PATH := hardware/ti/omap4xxx/domx
 endif
